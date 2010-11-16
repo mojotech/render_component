@@ -31,7 +31,7 @@ module Components
   end
 
   module InstanceMethods
-    
+
     protected
       # Renders the component specified as the response for the current method
       def render_component(options) #:doc:
@@ -44,7 +44,7 @@ module Components
           end
         end
       end
-      
+
       # Returns the component response as a string
       def render_component_into_view(options) #:doc:
         component_logging(options) do
@@ -53,15 +53,15 @@ module Components
             if redirected =~ %r{://}
               location = URI.parse(redirected)
               redirected = location.query ? "#{location.path}?#{location.query}" : location.path
-            end 
+            end
             render_component_into_view(Rails.application.routes.recognize_path(redirected, { :method => nil }))
           else
             response.body.html_safe
           end
         end
       end
-      
-      
+
+
       def flash_with_render_component(refresh = false) #:nodoc:
         if @component_flash.nil? || refresh
           @component_flash =
@@ -73,7 +73,7 @@ module Components
         end
         @component_flash
       end
-      
+
       def session_with_render_component
         #if defined?(@parent_controller)
         if component_request?
@@ -82,14 +82,14 @@ module Components
           @_request.session
         end
       end
-      
+
     private
       def component_response(options, reuse_response)
         klass = component_class(options)
         component_request  = request_for_component(klass.controller_path, options)
         # needed ???
         #if reuse_response
-          #component_request.env["action_controller.instance"].instance_variable_set :@_response, request.env["action_controller.instance"].instance_variable_get(:@_response)  
+          #component_request.env["action_controller.instance"].instance_variable_set :@_response, request.env["action_controller.instance"].instance_variable_get(:@_response)
         #end
         klass.process_with_components(component_request, options[:action], self)
       end
@@ -110,15 +110,15 @@ module Components
         if options.is_a? Hash
           old_style_params = options.delete(:params)
           options.merge!(old_style_params) unless old_style_params.nil?
-          
+
           request_params = options.symbolize_keys
           request_env = {}
-          
+
           request.env.select {|key, value| key == key.upcase || key == 'rack.input'}.each {|item| request_env[item[0]] = item[1]}
-          
+
           request_env['REQUEST_URI'] = url_for(options)
           request_env["PATH_INFO"] = url_for(options.merge(:only_path => true))
-          request_env["action_dispatch.request.symbolized_path_parameters"] = request_params 
+          request_env["action_dispatch.request.symbolized_path_parameters"] = request_params
           request_env["action_dispatch.request.parameters"] = request_params.with_indifferent_access
           ActionDispatch::Request.new(request_env)
         else

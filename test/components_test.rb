@@ -8,7 +8,7 @@ class CallersController < ActionController::Base
   def calling_from_controller_with_params
     render_component(:controller => "callees", :action => "being_called", :params => { "name" => "David" })
   end
-  
+
   def calling_from_controller_with_session
     session['name'] = 'Bernd'
     render_component(:controller => "callees", :action => "being_called")
@@ -75,14 +75,14 @@ class CalleesController < ActionController::Base
 end
 
 class ComponentsTest < ActionController::IntegrationTest #ActionController::TestCase
-  
+
   def setup
-    @routes.draw do 
+    @routes.draw do
       match 'callers/:action', :to => 'callers'
       match 'callees/:action', :to => 'callees'
     end
   end
-  
+
   def test_calling_from_controller
     get '/callers/calling_from_controller'
     assert_equal "Lady of the House, speaking", @response.body
@@ -97,7 +97,7 @@ class ComponentsTest < ActionController::IntegrationTest #ActionController::Test
     get '/callers/calling_from_controller_with_different_status_code'
     assert_equal 500, @response.response_code
   end
- 
+
   def test_calling_from_template
     get '/callers/calling_from_template'
     assert_equal "Ring, ring: Lady of the House, speaking", @response.body
@@ -140,14 +140,11 @@ class ComponentsTest < ActionController::IntegrationTest #ActionController::Test
 
     assert_equal "Lady of the House, speaking", @response.body
   end
-  
+
   def test_calling_from_controller_with_session
     get '/callers/calling_from_controller_with_session'
     assert_equal "Bernd of the House, speaking", @response.body
   end
-  
-  
-
 
   protected
     def etag_for(text)
